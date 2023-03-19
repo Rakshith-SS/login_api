@@ -55,8 +55,6 @@ class LoginUser(APIView):
     def post(self, request):
         serializer = LoginUserSerializer(data=request.data)
         if serializer.is_valid():
-            print(serializer.validated_data["username"])
-            print(serializer.data["password"])
             user = authenticate(username=serializer.data["username"],
                                 password=serializer.data["password"]
                                 )
@@ -65,9 +63,8 @@ class LoginUser(APIView):
                 data = {"access_token": str(refresh.access_token), "refresh_token": str(refresh)}
                 message = f"sent otp to {user.email} mail successfully"
                 random_number = random.randint(100000, 999999)
-                print(user.email)
             
-                #send_otp(user.email, random_number)
+                send_otp(user.email, random_number)
 
                 if user.login_otp is not None:
                     user.login_otp = ""
@@ -269,12 +266,12 @@ class Logout(APIView):
             print(user_token.token)
             return Response(
                 {
-                    "message": f"{user.username} has logged out successfully"
+                    "message": "logged out successfully"
                 }
             )
         except TokenError:
             return Response(
                 {
-                    "message": "Token expired logged out successfully"
+                    "message": "Token expired or logged out successfully"
                 }
             )
